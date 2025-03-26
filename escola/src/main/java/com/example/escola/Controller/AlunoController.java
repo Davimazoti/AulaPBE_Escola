@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/aluno")
@@ -31,4 +32,18 @@ public class AlunoController {
         return ResponseEntity.status(HttpStatus.OK).body(alunos);
     }
 
+    @PutMapping
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody Aluno updateAluno){
+        Optional<Aluno> optionalAluno = alunoRepository.findById(id);
+
+        if (optionalAluno.isPresent()){
+            Aluno aluno = optionalAluno.get();
+            aluno.setNome(updateAluno.getNome());
+            aluno.setCpf(updateAluno.getCpf());
+            aluno.setCurso(updateAluno.getCurso());
+            return ResponseEntity.ok(alunoRepository.save(aluno));
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aluno não encontrado.");
+        }
+    }
 }
